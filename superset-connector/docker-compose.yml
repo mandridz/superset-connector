@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  superset-connector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - SUPERSET_URL=${SUPERSET_URL}
+      - SUPERSET_ACCESS_TOKEN=${SUPERSET_ACCESS_TOKEN}
+      - PORT=3000
+
