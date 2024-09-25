@@ -25,7 +25,7 @@
    ```
 2. **Install Dependencies**
    ```bash
-   npm install
+   npm i
    ```
    
 ## Configuration
@@ -52,13 +52,13 @@ PORT=3000
 1. **Build the Project**
    
    ```bash
-   npm run build
+   npm run build --workspace=superset-connector
    ```
    
 2. **Start the Application**
 
    ```bash
-   npm run start:prod
+   npm run start:prod --workspace=superset-connector
    ```
 
 The application should now be running at `http://localhost:3000`.
@@ -68,16 +68,17 @@ The application should now be running at `http://localhost:3000`.
 1. **Build the Docker Image**
 
    ```bash
-   docker build -t superset-connector .
+   docker build \
+   --build-arg path=superset-connector \
+   -t superset-connector .
    ```
    
 2. **Run the Docker Container**
 
    ```bash
-   docker run -d \
-   --name superset-connector \
-   -p 3000:3000 \
-   --env-file .env \
+   docker run -d -p 3000:3000 \
+   --name superset-connector-container \
+   --env-file superset-connector/.env \
    superset-connector
    ```
 
@@ -90,7 +91,7 @@ Alternatively, you can use Docker Compose for easier management.
 **Run Docker Compose**
 
    ```bash
-   docker-compose up --build -d
+   PROJECT_NAME=superset-connector docker-compose up
    ```
 
 The application will be accessible at `http://localhost:3000`.

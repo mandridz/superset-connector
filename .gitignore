@@ -1,11 +1,11 @@
-# compiled output
-/dist
-/node_modules
-/build
-/nginx
+# Compiled output
+dist/
+node_modules/
+build/
+*.tsbuildinfo
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -17,11 +17,11 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
-/coverage
-/.nyc_output
+coverage/
+.nyc_output/
 
 # IDEs and editors
-/.idea
+.idea/
 .project
 .classpath
 .c9/
@@ -43,12 +43,12 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
-# temp directory
-.temp
-.tmp
+# Temp directories
+.temp/
+.tmp/
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
