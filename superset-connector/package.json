@@ -5,7 +5,7 @@
   "author": "Super Protocol",
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "npx nest build",
     "clean": "rimraf node_modules lib dist",
     "start": "nest start",
     "start:dev": "nest start --watch",
