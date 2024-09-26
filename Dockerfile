@@ -12,12 +12,15 @@ COPY package.json package-lock.json ./
 COPY superset-connector/package.json superset-connector/
 COPY superset-connector/package-lock.json superset-connector/
 
-# Install dependencies using npm workspaces and include devDependencies
-RUN npm install --include=dev
+# Install dependencies using npm workspaces
+RUN npm install
 
 # Stage 2: Build the Application
 FROM node:20-buster AS builder
 WORKDIR /app
+
+# Set NODE_ENV to development
+ENV NODE_ENV=development
 
 # Copy the entire repository
 COPY . .
@@ -31,17 +34,11 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
-# Add root node_modules/.bin to PATH
+# Add node_modules/.bin to PATH
 ENV PATH=/app/node_modules/.bin:$PATH
-
-# Debug step: Check if 'nest' command is available
-RUN which nest || echo "nest command not found"
 
 # Run the build script for the specific project
 RUN npm run build
-
-# (Optional) Verify that the dist folder was created
-# RUN ls -la ./dist
 
 # Stage 3: Prepare the Production Image
 FROM node:20-buster AS runner
