@@ -30,16 +30,14 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
-# Add node_modules/.bin to PATH to ensure 'nest' command is found
-ENV PATH=/app/node_modules/.bin:$PATH
+# Add both root and project node_modules/.bin to PATH
+ENV PATH=/app/${path}/node_modules/.bin:/app/node_modules/.bin:$PATH
 
+# Debug step: List contents of /app/${path}/node_modules/.bin
+RUN ls -la /app/${path}/node_modules/.bin
 
-# Debug step: List contents of /app/node_modules/.bin todo: remove it
-RUN ls -la /app/node_modules/.bin
-
-# Debug step: Check if 'nest' command is available todo: remove it
+# Debug step: Check if 'nest' command is available
 RUN npx nest --version || echo "nest command not found"
-
 
 # Run the build script for the specific project
 RUN npm run build
