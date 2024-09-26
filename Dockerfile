@@ -27,6 +27,9 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
+# Add /app/node_modules/.bin to PATH to ensure 'nest' command is found
+ENV PATH=/app/node_modules/.bin:$PATH
+
 # Run the build script for the specific project
 RUN npm run build
 
@@ -38,7 +41,7 @@ FROM node:20-buster AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Create a non-root user for running the application
+# Create a non-root user and group for security
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # Copy package.json and package-lock.json of the workspace project for production dependencies
@@ -54,7 +57,8 @@ ARG path=superset-connector
 COPY --from=builder /app/${path}/dist ./dist
 
 # Create necessary directories and set appropriate permissions
-RUN mkdir -p ./dist/cache ./uploads && chown -R appuser:appgroup ./dist/cache ./uploads
+RUN mkdir -p ./dist/cache ./uploads && \
+    chown -R appuser:appgroup ./dist/cache ./uploads
 
 # Switch to the non-root user for security
 USER appuser
