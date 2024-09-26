@@ -47,8 +47,14 @@ RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 # Copy package.json of the workspace project for production dependencies
 COPY superset-connector/package.json superset-connector/
 
+# Change working directory to the workspace directory
+WORKDIR /app/superset-connector
+
 # Install only production dependencies for the workspace
 RUN npm install --production
+
+# Return to /app directory
+WORKDIR /app
 
 # Define build argument again for the runner stage
 ARG path=superset-connector
