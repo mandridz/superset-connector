@@ -54,7 +54,7 @@ jobs:
             type=ref,event=tag
             type=ref,event=pr
             type=raw,value=build-${{ github.run_id }}
-            type=raw,value=${{ github.event.repository.name }}-${{ github.ref_name }}-build-${{ github.run_id }}
+            type=raw,value=${{ inputs.docker-context }}-${{ github.ref_name }}-build-${{ github.run_id }}
 
       - name: "Build and push Docker image"
         uses: docker/build-push-action@v4

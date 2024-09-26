@@ -2,12 +2,14 @@
 FROM node:20-buster AS dep
 WORKDIR /app
 
+# Set NODE_ENV to development to install devDependencies
+ENV NODE_ENV=development
+
 # Copy root package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Copy package.json and package-lock.json of the workspace project
+# Copy package.json of the workspace project
 COPY superset-connector/package.json superset-connector/
-COPY superset-connector/package-lock.json superset-connector/
 
 # Install dependencies using npm workspaces
 RUN npm install
@@ -28,21 +30,14 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
-# Add both root and project node_modules/.bin to PATH to ensure 'nest' command is found
-ENV PATH=/app/node_modules/.bin:/app/${path}/node_modules/.bin:$PATH
-
-# Verify that 'nest' command is available. todo: remove this
-RUN which nest
-
-# List contents of node_modules/.bin. todo: remove this
-RUN ls -la /app/node_modules/.bin
-RUN ls -la /app/superset-connector/node_modules/.bin
+# Add node_modules/.bin to PATH to ensure 'nest' command is found
+ENV PATH=/app/node_modules/.bin:$PATH
 
 # Run the build script for the specific project
 RUN npm run build
 
-# Verify that the dist folder was created
-RUN ls -la ./dist
+# (Optional) Verify that the dist folder was created
+# RUN ls -la ./dist
 
 # Stage 3: Prepare the Production Image
 FROM node:20-buster AS runner

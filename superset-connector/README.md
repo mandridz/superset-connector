@@ -20,7 +20,7 @@
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/mandridz/superset-connector.git
+   git clone https://github.com/Super-Protocol/sp-marketing-tools.git
    cd superset-connector
    ```
 2. **Install Dependencies**
