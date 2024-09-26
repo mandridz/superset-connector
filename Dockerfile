@@ -5,8 +5,9 @@ WORKDIR /app
 # Copy root package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Copy package.json of the workspace project
+# Copy package.json and package-lock.json of the workspace project
 COPY superset-connector/package.json superset-connector/
+COPY superset-connector/package-lock.json superset-connector/
 
 # Install dependencies using npm workspaces
 RUN npm install
@@ -27,8 +28,15 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
-# Add /app/node_modules/.bin to PATH to ensure 'nest' command is found
-ENV PATH=/app/node_modules/.bin:$PATH
+# Add both root and project node_modules/.bin to PATH to ensure 'nest' command is found
+ENV PATH=/app/node_modules/.bin:/app/${path}/node_modules/.bin:$PATH
+
+# Verify that 'nest' command is available. todo: remove this
+RUN which nest
+
+# List contents of node_modules/.bin. todo: remove this
+RUN ls -la /app/node_modules/.bin
+RUN ls -la /app/superset-connector/node_modules/.bin
 
 # Run the build script for the specific project
 RUN npm run build
@@ -45,7 +53,7 @@ ENV NODE_ENV=production
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # Copy package.json and package-lock.json of the workspace project for production dependencies
-COPY superset-connector/package*.json ./
+COPY superset-connector/package.json superset-connector/package-lock.json ./
 
 # Install only production dependencies
 RUN npm install --production
