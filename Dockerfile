@@ -8,9 +8,8 @@ ENV NODE_ENV=development
 # Copy root package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Copy package.json and package-lock.json of the workspace project
+# Copy package.json of the workspace project
 COPY superset-connector/package.json superset-connector/
-COPY superset-connector/package-lock.json superset-connector/
 
 # Install dependencies using npm workspaces
 RUN npm install
@@ -18,9 +17,6 @@ RUN npm install
 # Stage 2: Build the Application
 FROM node:20-buster AS builder
 WORKDIR /app
-
-# Set NODE_ENV to development
-ENV NODE_ENV=development
 
 # Copy the entire repository
 COPY . .
@@ -48,10 +44,10 @@ ENV NODE_ENV=production
 # Create a non-root user and group for security
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
-# Copy package.json and package-lock.json of the workspace project for production dependencies
-COPY superset-connector/package.json superset-connector/package-lock.json ./
+# Copy package.json of the workspace project for production dependencies
+COPY superset-connector/package.json superset-connector/
 
-# Install only production dependencies
+# Install only production dependencies for the workspace
 RUN npm install --production
 
 # Define build argument again for the runner stage
@@ -60,11 +56,10 @@ ARG path=superset-connector
 # Copy the built dist folder from the builder stage
 COPY --from=builder /app/${path}/dist ./dist
 
-# Create necessary directories and set appropriate permissions
-RUN mkdir -p ./dist/cache ./uploads && \
-    chown -R appuser:appgroup ./dist/cache ./uploads
+# Set appropriate permissions
+RUN chown -R appuser:appgroup ./dist
 
-# Switch to the non-root user for security
+# Switch to the non-root user
 USER appuser
 
 # Expose the application port
