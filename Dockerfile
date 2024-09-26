@@ -33,6 +33,14 @@ WORKDIR /app/${path}
 # Add node_modules/.bin to PATH to ensure 'nest' command is found
 ENV PATH=/app/node_modules/.bin:$PATH
 
+
+# Debug step: List contents of /app/node_modules/.bin todo: remove it
+RUN ls -la /app/node_modules/.bin
+
+# Debug step: Check if 'nest' command is available todo: remove it
+RUN npx nest --version || echo "nest command not found"
+
+
 # Run the build script for the specific project
 RUN npm run build
 
