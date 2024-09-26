@@ -8,11 +8,12 @@ ENV NODE_ENV=development
 # Copy root package.json and package-lock.json
 COPY package.json package-lock.json ./
 
-# Copy package.json of the workspace project
+# Copy package.json and package-lock.json of the workspace project
 COPY superset-connector/package.json superset-connector/
+COPY superset-connector/package-lock.json superset-connector/
 
-# Install dependencies using npm workspaces
-RUN npm install
+# Install dependencies using npm workspaces and include devDependencies
+RUN npm install --include=dev
 
 # Stage 2: Build the Application
 FROM node:20-buster AS builder
@@ -30,14 +31,11 @@ ARG path=superset-connector
 # Change working directory to the specified project
 WORKDIR /app/${path}
 
-# Add both root and project node_modules/.bin to PATH
-ENV PATH=/app/${path}/node_modules/.bin:/app/node_modules/.bin:$PATH
-
-# Debug step: List contents of /app/${path}/node_modules/.bin
-RUN ls -la /app/${path}/node_modules/.bin
+# Add root node_modules/.bin to PATH
+ENV PATH=/app/node_modules/.bin:$PATH
 
 # Debug step: Check if 'nest' command is available
-RUN npx nest --version || echo "nest command not found"
+RUN which nest || echo "nest command not found"
 
 # Run the build script for the specific project
 RUN npm run build
